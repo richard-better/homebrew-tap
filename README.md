@@ -2,7 +2,7 @@
 
 This tap distributes apps from [richard-better](https://github.com/richard-better).
 
-Switcheroo's cask is added after its first signed and notarized release. Once that release is published, install it with:
+Install [Switcheroo](https://github.com/richard-better/switcheroo/releases/latest) with:
 
 ```sh
 brew install --cask richard-better/tap/switcheroo
