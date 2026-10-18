@@ -1,13 +1,23 @@
-name: Update Switcheroo
+name: Update cask
 
 on:
   workflow_dispatch:
+    inputs:
+      cask:
+        description: The cask to update from its app's newest release.
+        type: choice
+        default: switcheroo
+        options:
+          - switcheroo
+          - trainstack-ride
+          - trainstack-ride@alpha
 
 permissions:
   contents: write
 
+# Every update writes to main, so they take turns.
 concurrency:
-  group: switcheroo-cask
+  group: tap-write
   cancel-in-progress: false
 
 jobs:
@@ -15,19 +25,35 @@ jobs:
     runs-on: ubuntu-24.04
     env:
       GH_TOKEN: ${{ github.token }}
+      CASK: ${{ inputs.cask }}
     steps:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
       - name: Import the latest published release
-        run: scripts/update.sh
+        run: |
+          case "$CASK" in
+            switcheroo) scripts/update.sh ;;
+            trainstack-ride) scripts/update-trainstack-ride.sh stable ;;
+            trainstack-ride@alpha) scripts/update-trainstack-ride.sh alpha ;;
+          esac
+      - name: Check the cask's style
+        if: inputs.cask != 'switcheroo'
+        run: |
+          if [ -f "Casks/$CASK.rb" ]; then /home/linuxbrew/.linuxbrew/bin/brew style "Casks/$CASK.rb"; fi
       - name: Commit the cask
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add Casks/switcheroo.rb
+          git add "Casks/$CASK.rb"
           if git diff --cached --quiet; then exit 0; fi
           git diff --cached
-          version="$(sed -n 's/^  version "\([0-9.]*\)"$/\1/p' Casks/switcheroo.rb)"
-          git commit -m "chore: update Switcheroo to $version"
-          git -c credential.helper='!gh auth git-credential' push
+          version="$(sed -n 's/^  version "\(.*\)"$/\1/p' "Casks/$CASK.rb")"
+          case "$CASK" in
+            switcheroo) app="Switcheroo" ;;
+            trainstack-ride) app="TrainStack Ride" ;;
+            trainstack-ride@alpha) app="TrainStack Ride Alpha" ;;
+          esac
+          git commit -m "chore: update $app to $version"
+          git -c credential.helper='!gh auth git-credential' pull --rebase origin main
+          git -c credential.helper='!gh auth git-credential' push origin HEAD:main
