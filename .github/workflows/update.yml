@@ -11,6 +11,10 @@ on:
           - switcheroo
           - trainstack-ride
           - trainstack-ride@alpha
+          - herdr
+  # Herdr publishes no event to start an update from, so its cask checks every day.
+  schedule:
+    - cron: "17 6 * * *"
 
 permissions:
   contents: write
@@ -26,7 +30,7 @@ jobs:
     runs-on: ubuntu-24.04
     env:
       GH_TOKEN: ${{ github.token }}
-      CASK: ${{ inputs.cask }}
+      CASK: ${{ inputs.cask || 'herdr' }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -37,9 +41,10 @@ jobs:
             switcheroo) scripts/update.sh ;;
             trainstack-ride) scripts/update-trainstack-ride.sh stable ;;
             trainstack-ride@alpha) scripts/update-trainstack-ride.sh alpha ;;
+            herdr) scripts/update-herdr.sh ;;
           esac
       - name: Check the cask's style
-        if: inputs.cask != 'switcheroo'
+        if: env.CASK != 'switcheroo'
         run: |
           if [ -f "Casks/$CASK.rb" ]; then /home/linuxbrew/.linuxbrew/bin/brew style "Casks/$CASK.rb"; fi
       - name: Commit the cask
@@ -54,6 +59,7 @@ jobs:
             switcheroo) app="Switcheroo" ;;
             trainstack-ride) app="TrainStack Ride" ;;
             trainstack-ride@alpha) app="TrainStack Ride Alpha" ;;
+            herdr) app="Herdr" ;;
           esac
           git commit -m "chore: update $app to $version"
           git -c credential.helper='!gh auth git-credential' pull --rebase origin main

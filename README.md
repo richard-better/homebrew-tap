@@ -1,6 +1,6 @@
 # Richard's Homebrew tap
 
-This tap distributes apps from [richard-better](https://github.com/richard-better).
+This tap distributes apps from [richard-better](https://github.com/richard-better), and casks for third-party apps that Homebrew doesn't carry.
 
 ## Switcheroo
 
@@ -36,5 +36,21 @@ gh workflow run update.yml --repo richard-better/homebrew-tap -f cask=trainstack
 ```
 
 `scripts/update-trainstack-ride.sh stable|alpha` picks the newest published release of the channel, checks the ZIP against its `SHA256SUMS`, and writes the cask. It never moves a cask to an older version, even if newer releases are deleted. Each cask appears with its channel's first release.
+
+## Herdr
+
+Install [Herdr](https://herdr.dev/), the native app for coding agents, with:
+
+```sh
+brew install --cask richard-better/tap/herdr
+```
+
+Herdr ships no cask of its own. This one installs the same Developer ID signed build as Herdr's install script, from the release manifest at `https://releases.herdr.dev/app/latest.json`, and adds `herdr-app` to the PATH. The app updates itself, and installs herdr-core when it first opens.
+
+The update workflow runs daily, and `scripts/update-herdr.sh` checks the download against the manifest's checksum and never moves the cask to an older version. To run it by hand:
+
+```sh
+gh workflow run update.yml --repo richard-better/homebrew-tap -f cask=herdr
+```
 
 All updates share one concurrency group and rebase before pushing, so they never overwrite each other.
