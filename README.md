@@ -1,6 +1,6 @@
 # Richard's Homebrew tap
 
-This tap distributes apps from [richard-better](https://github.com/richard-better), and casks for third-party apps that Homebrew doesn't carry.
+This tap distributes apps from [richard-better](https://github.com/richard-better), and casks and formulae for third-party apps that Homebrew doesn't carry.
 
 ## Switcheroo
 
@@ -39,18 +39,19 @@ gh workflow run update.yml --repo richard-better/homebrew-tap -f cask=trainstack
 
 ## Herdr
 
-Install [Herdr](https://herdr.dev/), the native app for coding agents, with:
+Install [Herdr](https://herdr.dev/), the native app for coding agents, and [herdr-core](https://github.com/herdrdev/herdr-core), the runtime that keeps its terminals running, with:
 
 ```sh
 brew install --cask richard-better/tap/herdr
+brew install richard-better/tap/herdr-core
 ```
 
-Herdr ships no cask of its own. This one installs the same Developer ID signed build as Herdr's install script, from the release manifest at `https://releases.herdr.dev/app/latest.json`, and adds `herdr-app` to the PATH. The app updates itself, and installs herdr-core when it first opens.
+Herdr ships neither as a Homebrew package. The cask and formula install the same signed builds as Herdr's install scripts, from the release manifests at `https://releases.herdr.dev/app/latest.json` and `https://releases.herdr.dev/core/latest.json`. The app updates itself. It leaves a herdr-core installed by Homebrew to Homebrew, so update it with `brew upgrade herdr-core`, then run `hc server restart` to move the running core to the new version. Terminals keep running.
 
-The update workflow runs daily, and `scripts/update-herdr.sh` checks the download against the manifest's checksum and never moves the cask to an older version. To run it by hand:
+The update workflow runs daily for both. `scripts/update-herdr.sh` and `scripts/update-herdr-core.sh` check each download against its manifest's checksum and never move to an older version. To run one by hand:
 
 ```sh
-gh workflow run update.yml --repo richard-better/homebrew-tap -f cask=herdr
+gh workflow run update.yml --repo richard-better/homebrew-tap -f cask=herdr-core
 ```
 
 All updates share one concurrency group and rebase before pushing, so they never overwrite each other.
