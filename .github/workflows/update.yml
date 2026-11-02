@@ -15,10 +15,11 @@ on:
 permissions:
   contents: write
 
-# Every update writes to main, so they take turns.
+# Every update writes to main, so they take turns, and every waiting update keeps its place.
 concurrency:
   group: tap-write
   cancel-in-progress: false
+  queue: max
 
 jobs:
   update:
