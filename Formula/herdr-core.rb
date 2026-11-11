@@ -1,9 +1,9 @@
 class HerdrCore < Formula
   desc "Terminals for coding agents that keep running"
   homepage "https://github.com/herdrdev/herdr-core"
-  url "https://releases.herdr.dev/core/0.1.19/herdr-core-macos-aarch64.tar.gz"
-  version "0.1.19"
-  sha256 "5338d900adadb6d273b9c8e97027247db3179ccffede10a1793358f16e08d683"
+  url "https://releases.herdr.dev/core/0.1.20/herdr-core-macos-aarch64.tar.gz"
+  version "0.1.20"
+  sha256 "e58985d3fef6e909f33d3c5a4426e4898c81564a557d4636591cec9e3a06af26"
   license "Apache-2.0"
 
   livecheck do
