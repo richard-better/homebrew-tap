@@ -1,6 +1,6 @@
 cask "herdr" do
-  version "0.1.16"
-  sha256 "99000875ead9333a33f5cb60274ccd9cf9d3e47360f03613a467295105c71c04"
+  version "0.1.17"
+  sha256 "e0341679ed38162ba920b623c9f27bdd866f3bf7f4ae0dc08398503db4e1137a"
 
   url "https://releases.herdr.dev/app/#{version}/herdr-app-macos-aarch64.tar.gz"
   name "Herdr"
